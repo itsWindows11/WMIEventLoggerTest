@@ -13,6 +13,8 @@ public sealed class WMIEventLogger : ILogger
     {
         if (!IsEnabled(logLevel)) return;
 
+        using var log = new EventLog();
+
         var type = logLevel switch
         {
             LogLevel.Warning => EventLogEntryType.Warning,
@@ -20,6 +22,8 @@ public sealed class WMIEventLogger : ILogger
             _ => EventLogEntryType.Information,
         };
 
-        EventLog.WriteEntry("Logger Test App", formatter(state, exception), type);
+        log.Source = "Logger Test App";
+
+        log.WriteEntry(formatter(state, exception), type);
     }
 }
